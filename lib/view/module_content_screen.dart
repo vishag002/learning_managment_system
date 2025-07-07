@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:learning_managment_system/api_service/modules_view_api_service.dart';
 import 'package:learning_managment_system/model/modules_content_model.dart';
 import 'package:learning_managment_system/utilis/text_style_const.dart';
+import 'package:learning_managment_system/view/vimeo_video_player_screen.dart';
 import 'package:learning_managment_system/view/you_tube_video_screen.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -53,10 +54,19 @@ class _ModuleContentScreenState extends State<ModuleContentScreen> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {
-                    Get.to(
-                      () => PlayVideoFromYoutube(),
-                      transition: Transition.cupertino,
-                    );
+                    if (modulesContent[index].videoType == 'YouTube') {
+                      Get.to(
+                        () => PlayVideoFromYoutube(
+                          url: modulesContent[index].videoUrl,
+                        ),
+                        transition: Transition.cupertino,
+                      );
+                    } else {
+                      Get.to(
+                        () => VimeoVideoViewer(),
+                        transition: Transition.cupertino,
+                      );
+                    }
                   },
                   child: modulesContentCard(
                     title: modulesContent[index].moduleTitle,

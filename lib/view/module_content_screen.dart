@@ -63,7 +63,9 @@ class _ModuleContentScreenState extends State<ModuleContentScreen> {
                       );
                     } else {
                       Get.to(
-                        () => VimeoVideoViewer(),
+                        () => VimeoVideoViewer(
+                          url: modulesContent[index].videoUrl,
+                        ),
                         transition: Transition.cupertino,
                       );
                     }

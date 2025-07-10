@@ -37,6 +37,7 @@ dependencies:
   pod_player: ^0.2.2
   shimmer_animation: ^2.2.2
   vimeo_video_player: ^1.0.1
+  youtube_player_flutter: ^9.1.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:pod_player/pod_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
   final String url;
+
   const PlayVideoFromYoutube({super.key, required this.url});
 
   @override
@@ -11,41 +11,32 @@ class PlayVideoFromYoutube extends StatefulWidget {
 }
 
 class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
-  PodPlayerController? controller;
-  bool isLoading = true;
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    loadVideo();
-  }
 
-  void loadVideo() async {
-    try {
-      final urls = await PodPlayerController.getYoutubeUrls(widget.url);
+    final videoId = YoutubePlayer.convertUrlToId(widget.url);
 
-      if (urls == null || urls.isEmpty) {
-        Get.snackbar("Error", "Unable to fetch video URLs");
-        setState(() => isLoading = false);
-        return;
-      }
-
-      controller = PodPlayerController(
-        playVideoFrom: PlayVideoFrom.networkQualityUrls(videoUrls: urls),
-        podPlayerConfig: const PodPlayerConfig(videoQualityPriority: [240]),
+    if (videoId != null) {
+      _controller = YoutubePlayerController(
+        initialVideoId: videoId,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+          controlsVisibleAtStart: true,
+        ),
       );
-
-      await controller!.initialise();
-      setState(() => isLoading = false);
-    } catch (e) {
-      setState(() => isLoading = false);
-      Get.snackbar("Error", "Failed to load video: $e");
+    } else {
+      // Handle invalid URL
+      throw Exception("Invalid YouTube URL: ${widget.url}");
     }
   }
 
   @override
   void dispose() {
-    controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -53,11 +44,23 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("YouTube Player")),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : controller == null
-          ? const Center(child: Text("Failed to load video."))
-          : Center(child: PodVideoPlayer(controller: controller!)),
+      body: YoutubePlayerBuilder(
+        player: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.red,
+          progressColors: const ProgressBarColors(
+            playedColor: Colors.red,
+            handleColor: Colors.redAccent,
+          ),
+          onReady: () {
+            debugPrint('YouTube player is ready.');
+          },
+        ),
+        builder: (context, player) {
+          return Column(children: [player, const SizedBox(height: 20)]);
+        },
+      ),
     );
   }
 }

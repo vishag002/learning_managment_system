@@ -34,7 +34,6 @@ dependencies:
   get: ^4.7.2
   http: ^1.4.0
   lottie: ^3.3.1
-  pod_player: ^0.2.2
   shimmer_animation: ^2.2.2
   vimeo_video_player: ^1.0.1
   youtube_player_flutter: ^9.1.1
